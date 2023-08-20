@@ -1,0 +1,21 @@
+{
+  "name": "recepies-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev-client": "npm run dev --workspace=client",
+    "dev-server": "npm run start:dev --workspace=server",
+    "dev": "concurrently \"npm:dev-client\" \"npm:dev-server\""
+  },
+  "author": "farriqmfq",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

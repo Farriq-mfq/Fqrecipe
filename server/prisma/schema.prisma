@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(55)
+  email     String    @unique @db.VarChar(55)
+  password  String    @db.VarChar(55)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  recepies  recipes[]
+  reviews   reviews[]
+}
+
+model categories {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(55)
+  recipes recipes[]
+}
+
+model dishs {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(55)
+  recipes recipes[]
+}
+
+model reviews {
+  id        Int     @id @default(autoincrement())
+  user      users   @relation(fields: [usersId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usersId   Int
+  recipe    recipes @relation(fields: [recipesId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  recipesId Int
+}
+
+model instructions {
+  id          Int     @id @default(autoincrement())
+  recipe      recipes @relation(fields: [recipesId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  recipesId   Int
+  step_number Int
+  description String  @db.Text
+}
+
+model recipes {
+  id           Int            @id @default(autoincrement())
+  user         users          @relation(fields: [usersId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usersId      Int
+  dish         dishs          @relation(fields: [dishsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  dishsId      Int
+  category     categories     @relation(fields: [categoriesId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  categoriesId Int
+  reviews      reviews[]
+  instructions instructions[]
+  description  String         @db.Text
+  prep_time    Int
+  cook_time    Int
+  image_url    String
+}
+
+model recipes_ingredients {
+  id         Int    @id @default(autoincrement())
+  ingredient String @db.Text
+  amount     Int
+  unit       units  @relation(fields: [unitsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  unitsId    Int
+}
+
+model units {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  recipes_ingredients recipes_ingredients[]
+}
