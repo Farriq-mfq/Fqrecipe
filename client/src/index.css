@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply antialiased;
+}
+
+.app__link__active {
+  @apply bg-warning text-black font-semibold px-5 py-2.5 rounded-box uppercase;
+}
+.app__link__pending {
+  @apply bg-warning text-gray-400 px-5 py-2.5 rounded-box;
+}
+
+#nprogress .bar {
+  @apply bg-warning !important;
+}
+#nprogress .spinner-icon {
+  @apply border-t-warning border-l-warning !important;
+}

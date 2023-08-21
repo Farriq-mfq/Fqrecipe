@@ -1,14 +1,15 @@
 import React from "react";
-interface IMainLayout {
-  children: React.ReactNode;
-}
-const MainLayout: React.FC<IMainLayout> = ({ children }) => {
+import { Outlet } from "react-router-dom";
+import Header from "./Header";
+interface IMainLayout {}
+const MainLayout: React.FC<IMainLayout> = () => {
   return (
-    <>
-      HEADER
-      {children}
-      FOOTER
-    </>
+    <div className="max-w-7xl mx-auto">
+      <Header />
+      <div className="mt-5 px-2">
+        <Outlet />
+      </div>
+    </div>
   );
 };
 
