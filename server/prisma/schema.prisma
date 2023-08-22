@@ -51,6 +51,7 @@ model instructions {
 
 model recipes {
   id           Int            @id @default(autoincrement())
+  name         String
   user         users          @relation(fields: [usersId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   usersId      Int
   dish         dishs          @relation(fields: [dishsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
