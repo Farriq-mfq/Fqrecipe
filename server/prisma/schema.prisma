@@ -11,14 +11,15 @@ datasource db {
 }
 
 model users {
-  id        Int       @id @default(autoincrement())
-  name      String    @db.VarChar(55)
-  email     String    @unique @db.VarChar(55)
-  password  String    @db.VarChar(55)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  recepies  recipes[]
-  reviews   reviews[]
+  id            Int       @id @default(autoincrement())
+  name          String    @db.VarChar(55)
+  email         String    @unique
+  password      String
+  refresh_token String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  recepies      recipes[]
+  reviews       reviews[]
 }
 
 model categories {
