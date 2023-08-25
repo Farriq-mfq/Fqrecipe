@@ -10,6 +10,8 @@ export class OnlyGuard implements CanActivate {
             context.getHandler()
         ])
 
+        if (onlys === undefined) return true
+
         const request = context.switchToHttp().getRequest() as Request
 
         const requestJsonKeys = Object.keys(request.body)

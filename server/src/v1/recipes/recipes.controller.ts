@@ -1,20 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { RecipeDto } from './dto/recipe.dto';
 import { RecipesService } from './recipes.service';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
-import { UpdateRecipeDto } from './dto/update-recipe.dto';
 
 @Controller('recipes')
 export class RecipesController {
-  constructor(private readonly recipesService: RecipesService) {}
+  constructor(private readonly recipesService: RecipesService) { }
 
   @Post()
-  create(@Body() createRecipeDto: CreateRecipeDto) {
-    return this.recipesService.create(createRecipeDto);
+  create(@Body() recipeDto: RecipeDto) {
+    return this.recipesService.create(recipeDto);
   }
 
   @Get()
-  findAll() {
-    return this.recipesService.findAll();
+  findAll(@Query('page', ParseIntPipe) page: number, @Query('perpage', ParseIntPipe) perPage: number, @Query('search') search?: string) {
+    return this.recipesService.findAll(page, perPage, search);
   }
 
   @Get(':id')
@@ -23,8 +22,8 @@ export class RecipesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRecipeDto: UpdateRecipeDto) {
-    return this.recipesService.update(+id, updateRecipeDto);
+  update(@Param('id') id: string, @Body() recipeDto: RecipeDto) {
+    return this.recipesService.update(+id, recipeDto);
   }
 
   @Delete(':id')

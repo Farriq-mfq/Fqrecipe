@@ -6,6 +6,8 @@ import { PrismaService } from './../../../prisma/prisma.service';
 import { AuthPayload } from './../types/authPayload.type';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { RefreshDto } from './dto/refresh.dto';
+import { users } from '@prisma/client';
 
 export interface AuthTokenResponse { access_token: string, refresh_token: string }
 
@@ -71,7 +73,47 @@ export class AuthService {
                 email: register.email
             })
         } catch (e) {
-            console.log(e);
+            if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.message)
+            } else {
+                throw new InternalServerErrorException()
+            }
+        }
+    }
+
+    async createRefreshToken(RefreshDto: RefreshDto, user: users): Promise<AuthTokenResponse> {
+        try {
+            if (RefreshDto.refresh_token != user.refresh_token) throw new BadRequestException('invalid refresh token')
+            const payload = await this.JwtService.verify(RefreshDto.refresh_token, { secret: this.REFRESH_TOKEN_KEY })
+            const { access_token, refresh_token } = await this.createToken({ sub: payload.sub, email: payload.email })
+            return {
+                access_token,
+                refresh_token
+            }
+        } catch (e) {
+            if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.message)
+            } else {
+                throw new UnauthorizedException(e.message)
+            }
+        }
+    }
+
+    async logoutService(user: users): Promise<string> {
+        try {
+            const logout = await this.PrismaService.users.update({
+                where: {
+                    id: user.id
+                },
+                data: {
+                    refresh_token: null
+                }
+            })
+
+            if (!logout) throw new BadRequestException()
+
+            return "succesfully logout"
+        } catch (e) {
             if (e instanceof BadRequestException) {
                 throw new BadRequestException(e.message)
             } else {
@@ -81,17 +123,13 @@ export class AuthService {
     }
 
     private async createToken(payload: AuthPayload): Promise<AuthTokenResponse> {
-        const [access_token, refresh_token] = await Promise.all([
-            // auth token
-            this.JwtService.sign(payload, { secret: this.ACCESS_TOKEN_KEY, expiresIn: '15m' }),
-            // refresh token
-            this.JwtService.sign(payload, { secret: this.REFRESH_TOKEN_KEY, expiresIn: '7d' })
-        ])
+        const access_token = await this.JwtService.sign(payload, { secret: this.ACCESS_TOKEN_KEY, expiresIn: '15m' });
 
-        const hashRefreshToken = await hash(refresh_token, 10)
+        const refresh_token = await this.JwtService.sign({ ...payload, access_token }, { secret: this.REFRESH_TOKEN_KEY, expiresIn: '7d' })
+
         await this.PrismaService.users.update({
             data: {
-                refresh_token: hashRefreshToken
+                refresh_token
             },
             where: {
                 id: payload.sub
