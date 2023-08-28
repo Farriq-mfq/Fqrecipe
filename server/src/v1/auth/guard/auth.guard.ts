@@ -1,3 +1,4 @@
+import { Reflector } from '@nestjs/core';
 import { PrismaService } from './../../../../prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -8,13 +9,17 @@ import { AuthPayload, RefreshAuthPayload } from '@V1/types/authPayload.type';
 export class AuthGuard implements CanActivate {
     private ACCESS_TOKEN_KEY: string
     private REFRESH_TOKEN_KEY: string
-    constructor(private JwtService: JwtService, private ConfigService: ConfigService, private PrismaService: PrismaService) {
+    constructor(private JwtService: JwtService, private ConfigService: ConfigService, private PrismaService: PrismaService, private reflector: Reflector) {
         this.ACCESS_TOKEN_KEY = this.ConfigService.get('access_token_secret')
         this.REFRESH_TOKEN_KEY = this.ConfigService.get('refresh_token_secret')
     }
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest() as Request
         const token = this.parseToken(request)
+        const isPublicHandler: boolean = this.reflector.get('public', context.getHandler())
+        const isPublicClass: boolean = this.reflector.get('public', context.getClass())
+
+        if (isPublicClass && isPublicHandler) return true
 
         try {
             const payload: AuthPayload = await this.JwtService.verify(token, { secret: this.ACCESS_TOKEN_KEY })

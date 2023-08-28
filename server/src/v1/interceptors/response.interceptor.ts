@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { Response } from 'express';
 
 export interface WebbResponse {
-    code: number,
+    statusCode: number,
     data: any;
 }
 
@@ -14,7 +14,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, WebbResponse> 
         const response = context.switchToHttp().getResponse() as Response
         return next.handle().pipe(map(data => {
             return {
-                code: response.statusCode,
+                statusCode: response.statusCode,
                 data
             }
         }));

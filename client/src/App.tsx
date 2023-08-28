@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import npProgress from "nprogress";
 import "nprogress/nprogress.css";
 import DetailRecipe from "./pages/Recipe/Detail";
+import AuthLayout from "./components/layouts/AuthLayout";
+import Login from "./pages/Auth/Login";
 function App() {
   const location = useLocation();
 
@@ -27,6 +29,10 @@ function App() {
         <Route path="recipe" element={<Recipe />} />
         <Route path="recipe/:slug/detail" element={<DetailRecipe />} />
         <Route path="account" element={<Account />} />
+      </Route>
+
+      <Route path="/auth" element={<AuthLayout />}>
+        <Route path="login" element={<Login />} />
       </Route>
     </Routes>
   );

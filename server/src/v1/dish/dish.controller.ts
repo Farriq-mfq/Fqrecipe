@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { dishDto } from './dto/dish.dto';
 import { DishService } from './dish.service';
+import { dishDto } from './dto/dish.dto';
 
 @Controller('dish')
 export class DishController {

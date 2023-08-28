@@ -16,6 +16,7 @@
   "author": "farriqmfq",
   "license": "ISC",
   "dependencies": {
+    "@nestjs/mapped-types": "*",
     "concurrently": "^8.2.0"
   }
 }
