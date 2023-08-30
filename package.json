@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@nestjs/mapped-types": "*",
-    "concurrently": "^8.2.0"
+    "concurrently": "^8.2.0",
+    "react-hot-toast": "^2.4.1"
   }
 }

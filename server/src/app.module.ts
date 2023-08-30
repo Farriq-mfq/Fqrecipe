@@ -24,10 +24,6 @@ import { AuthGuard } from '@V1/auth/guard/auth.guard';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: AuthGuard
-    },
-    {
-      provide: APP_GUARD,
       useClass: OnlyGuard
     }
   ]

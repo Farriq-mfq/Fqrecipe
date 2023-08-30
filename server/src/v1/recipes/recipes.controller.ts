@@ -1,8 +1,10 @@
 import { User } from '@V1/decorators/user.decorator';
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { RecipeDto } from './dto/recipe.dto';
 import { RecipesService } from './recipes.service';
+import { AuthGuard } from '@V1/auth/guard/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('recipes')
 export class RecipesController {
   constructor(private readonly recipesService: RecipesService) { }

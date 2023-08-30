@@ -6,7 +6,10 @@ type PayloadSignIn = {
     password: string
 }
 
-// must be fix auth guard in global with one to one set autj guard on every contoller or handler / method
 export const signInRequest = async ({ email, password }: PayloadSignIn): Promise<AxiosResponse> => {
     return await http.post('/auth/login', { email, password })
+}
+
+export const signOutRequest = async (): Promise<AxiosResponse> => {
+    return await http.post('/auth/logout');
 }

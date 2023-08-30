@@ -16,11 +16,7 @@ export class AuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest() as Request
         const token = this.parseToken(request)
-        const isPublicHandler: boolean = this.reflector.get('public', context.getHandler())
-        const isPublicClass: boolean = this.reflector.get('public', context.getClass())
-
-        if (isPublicClass && isPublicHandler) return true
-
+        
         try {
             const payload: AuthPayload = await this.JwtService.verify(token, { secret: this.ACCESS_TOKEN_KEY })
             const user = await this.PrismaService.users.findUnique({

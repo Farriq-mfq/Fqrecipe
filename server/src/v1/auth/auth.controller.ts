@@ -1,17 +1,16 @@
 import { Only } from '@V1/decorators/only.decorator';
 import { User } from '@V1/decorators/user.decorator';
-import { Body, Controller, Get, HttpCode, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { RegisterDto } from './dto/register.dto';
-import { Public } from '@V1/decorators/public.decorator';
-import { Response } from 'express'
+import { AuthGuard } from './guard/auth.guard';
 @Controller('auth')
 export class AuthController {
     constructor(private AuthService: AuthService) { }
 
-    @Public()
     @Only('email', 'password')
     @HttpCode(200)
     @Post("login")
@@ -20,7 +19,6 @@ export class AuthController {
         return res.setHeader('Authorization', response.access_token).json(response)
     }
 
-    @Public()
     @Only('name', 'email', 'password')
     @Post("register")
     async register(@Body() RegisterDto: RegisterDto) {
@@ -28,6 +26,7 @@ export class AuthController {
 
     }
 
+    @UseGuards(AuthGuard)
     @HttpCode(200)
     @Only('refresh_token')
     @Post('refresh')
@@ -35,11 +34,13 @@ export class AuthController {
         return await this.AuthService.createRefreshToken(RefreshDto, user)
     }
 
+    @UseGuards(AuthGuard)
     @Get('user')
     async currentUser(@User() user: any) {
         return user
     }
 
+    @UseGuards(AuthGuard)
     @Post('logout')
     async logout(@User() user: any) {
         return await this.AuthService.logoutService(user)

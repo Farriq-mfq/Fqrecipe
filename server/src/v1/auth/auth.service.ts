@@ -19,7 +19,7 @@ export class AuthService {
         this.ACCESS_TOKEN_KEY = this.configService.get('access_token_secret')
         this.REFRESH_TOKEN_KEY = this.configService.get('refresh_token_secret')
     }
-    async loginService(loginDto: LoginDto): Promise<AuthTokenResponse> {
+    async loginService(loginDto: LoginDto): Promise<AuthTokenResponse & { user: Partial<users>, expiresIn: number }> {
         try {
             const validateUser = await this.PrismaService.users.findFirst({
                 where: {
@@ -33,10 +33,16 @@ export class AuthService {
 
             if (!checkPassword) throw new UnauthorizedException("invalid email or password")
 
-            return await this.createToken({
-                sub: validateUser.id,
-                email: validateUser.email
-            })
+            delete validateUser.password
+
+            return {
+                ...await this.createToken({
+                    sub: validateUser.id,
+                    email: validateUser.email
+                }),
+                user: validateUser,
+                expiresIn: 15
+            }
 
         } catch (e) {
             if (e instanceof UnauthorizedException) {
