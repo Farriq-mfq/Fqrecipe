@@ -11,6 +11,7 @@ import Login from "./pages/Auth/Login";
 import Home from "./pages/Home";
 import Recipe from "./pages/Recipe";
 import DetailRecipe from "./pages/Recipe/Detail";
+import Register from "./pages/Auth/Register";
 function App() {
   const location = useLocation();
 
@@ -49,6 +50,7 @@ function App() {
         }
       >
         <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
       </Route>
     </Routes>
   );

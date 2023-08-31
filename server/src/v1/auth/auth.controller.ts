@@ -1,6 +1,6 @@
 import { Only } from '@V1/decorators/only.decorator';
 import { User } from '@V1/decorators/user.decorator';
-import { Body, Controller, Get, HttpCode, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -41,6 +41,7 @@ export class AuthController {
     }
 
     @UseGuards(AuthGuard)
+    @HttpCode(HttpStatus.OK)
     @Post('logout')
     async logout(@User() user: any) {
         return await this.AuthService.logoutService(user)

@@ -6,8 +6,6 @@ export default function Home() {
   const auth = useAuthUser();
   return (
     <Grid>
-      {auth()?.user}
-      sdfknsdln
       <Banner />
       <Populer />
     </Grid>

@@ -13,7 +13,8 @@ const Account = () => {
   const navigate = useNavigate();
   const { status, mutate } = useMutation(signOutRequest, {
     onSuccess() {
-      if (signOut()) navigate("/auth/login");
+      if (signOut()) {navigate("/auth/login"); ToastPicker(200, "Logout successfully");}
+     
     },
     onError(error: AxiosError) {
       ToastPicker(

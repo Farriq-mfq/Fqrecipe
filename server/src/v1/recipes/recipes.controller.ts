@@ -15,8 +15,8 @@ export class RecipesController {
   }
 
   @Get()
-  findAll(@Query('page', ParseIntPipe) page: number, @Query('perpage', ParseIntPipe) perPage: number, @User() user: any) {
-    return this.recipesService.findAll(page, perPage, user);
+  async findAll(@Query('page', ParseIntPipe) page: number, @Query('perpage', ParseIntPipe) perPage: number, @User() user: any, @Query() search: string) {
+    return await this.recipesService.findAll(page, perPage, user, search);
   }
 
   @Get(':id')

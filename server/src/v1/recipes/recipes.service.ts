@@ -51,7 +51,7 @@ export class RecipesService {
     }
   }
 
-  async findAll(page: number, perPage: number, user: users): Promise<Paginate<recipes>> {
+  async findAll(page: number, perPage: number, user: users, search?: string): Promise<Paginate<recipes>> {
     try {
       const paginate = toPaginate({ perPage, page })
       return paginate(this.PrismaService.recipes, { where: { usersId: user.id } });

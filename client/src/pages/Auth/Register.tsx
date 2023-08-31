@@ -1,14 +1,13 @@
-import { AxiosError, AxiosResponse } from "axios";
-import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
-import { PayloadSignIn, signInRequest } from "../../requests/auth.request";
-import { ToastPicker } from "../../utils/toastPicker";
 import { useSignIn } from "react-auth-kit";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { PayloadSignUp, signUpRequest } from "../../requests/auth.request";
+import { useMutation } from "react-query";
+import { AxiosError, AxiosResponse } from "axios";
+import { ToastPicker } from "../../utils/toastPicker";
 type Props = {};
 
-
-export default function Login({}: Props) {
+export default function Register({}: Props) {
   // hooks define
   const navigate = useNavigate();
   const signIn = useSignIn();
@@ -17,18 +16,19 @@ export default function Login({}: Props) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<PayloadSignIn>();
-  const { mutate, status } = useMutation(signInRequest, {
+  } = useForm<PayloadSignUp>();
+  const { mutate, status } = useMutation(signUpRequest, {
     onSuccess(response: AxiosResponse) {
       if (
         signIn({
-          token: response.data.access_token,
-          authState: response.data.user,
+          token: response.data.data.access_token,
+          authState: response.data.data.user,
           tokenType: "Bearer",
-          expiresIn: response.data.expiresIn,
-          refreshToken: response.data.refresh_token,
+          expiresIn: response.data.data.expiresIn,
+          refreshToken: response.data.data.refresh_token,
         })
       ) {
+        ToastPicker(201,"Register successfully")
         navigate("/", { replace: true });
       }
     },
@@ -40,17 +40,26 @@ export default function Login({}: Props) {
     },
   });
 
-  const handleLogin = async (data: PayloadSignIn): Promise<void> => {
+  const handleSignUp = async (data: PayloadSignUp): Promise<void> => {
     await mutate({ ...data });
   };
 
   return (
     <div>
       <div className="h-12 bg-warning items-center flex justify-center">
-        <h1 className="font-semibold text-2xl">Login to FqRecipe</h1>
+        <h1 className="font-semibold text-2xl">Register to FqRecipe</h1>
       </div>
-      <form onSubmit={handleSubmit(handleLogin)}>
+      <form onSubmit={handleSubmit(handleSignUp)}>
         <div className="p-5">
+          <div className="form-control my-4">
+            <input
+              type="text"
+              className="input input-bordered"
+              placeholder="Name"
+              {...register("name", { required: true })}
+            />
+            {errors.password && <p role="alert">{errors.password?.message}</p>}
+          </div>
           <div className="form-control my-4">
             <input
               type="email"
@@ -77,11 +86,11 @@ export default function Login({}: Props) {
               {status === "loading" && (
                 <span className="loading loading-spinner"></span>
               )}
-              Login
+              Register
             </button>
           </div>
           <p className="mt-2 text-blue-600 text-center">
-            Don't have account ? <Link to={'/auth/register'}>Register</Link>
+            have account ? <Link to={"/auth/login"}>Login</Link>
           </p>
         </div>
       </form>

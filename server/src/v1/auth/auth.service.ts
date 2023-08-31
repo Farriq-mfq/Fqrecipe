@@ -34,6 +34,7 @@ export class AuthService {
             if (!checkPassword) throw new UnauthorizedException("invalid email or password")
 
             delete validateUser.password
+            delete validateUser.refresh_token
 
             return {
                 ...await this.createToken({
@@ -53,7 +54,7 @@ export class AuthService {
         }
     }
 
-    async registerService(RegisterDto: RegisterDto): Promise<AuthTokenResponse> {
+    async registerService(RegisterDto: RegisterDto): Promise<AuthTokenResponse & { user: Partial<users>, expiresIn: number }> {
         try {
             const checkEmail = await this.PrismaService.users.findFirst({
                 where: {
@@ -74,10 +75,16 @@ export class AuthService {
 
             if (!register) throw new BadRequestException()
 
-            return await this.createToken({
-                sub: register.id,
-                email: register.email
-            })
+            delete register.password
+            delete register.refresh_token
+            return {
+                ...await this.createToken({
+                    sub: register.id,
+                    email: register.email
+                }),
+                user: register,
+                expiresIn: 15
+            }
         } catch (e) {
             if (e instanceof BadRequestException) {
                 throw new BadRequestException(e.message)
